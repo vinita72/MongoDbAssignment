@@ -1,0 +1,74 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 MonGoDb\par
+\par
+display all the documents in the collection restaurants.\par
+db.addresses.find()\par
+display the fields restaurant_id, name, borough and cuisine for all the documents in the collection restaurant.\par
+db.addresses.find(\{\}, \{_id:1, name:1, cuisine: 1, borough: 1, restaurant_id: 1\})\par
+display the fields restaurant_id, name, borough and cuisine, but exclude the field _id for all the documents in the collection restaurant.\par
+db.addresses.find(\{\}, \{_id:0, name:1, cuisine: 1, borough: 1, restaurant_id: 1\})\par
+display the fields restaurant_id, name, borough and zip code, but exclude the field _id for all the documents in the collection restaurant.\par
+db.addresses.find(\{\}, \{_id:0, name:1, cuisine: 1, borough: 1, restaurant_id: 1, "address.zipcode": 1\})\par
+display all the restaurant which is in the borough Bronx.\par
+db.addresses.find(\{"borough" : "Bronx"\}).pretty()\par
+display the first 5 restaurant which is in the borough Bronx.\par
+db.addresses.find(\{"borough" : "Bronx"\}).limit(5)\par
+display the next 5 restaurants after skipping first 5 which are in the borough Bronx.\par
+db.addresses.find(\{"borough" : "Bronx"\}).skip(5).limit(5)\par
+find the restaurants who achieved a score more than 90.\par
+db.addresses.find(\{"grades.score" : \{"$gt" : 90\}\})\par
+find the restaurants that achieved a score, more than 80 but less than 100.\par
+db.addresses.find(\{$and : [\{"grades.score" : \{"$gt" : 90\}\},\{"grades.score" : \{"$lt" : 100\}\}]\})\par
+find the restaurants which locate in latitude value less than -95.754168.\par
+db.addresses.find(\{"address.coord.0" : \{$lt : -95.754168\}\}) 11. find the restaurants that do not prepare any cuisine of 'American' and their grade score more than 70 and latitude less than -65.754168.\par
+db.addresses.find(\{$and : [\{"cuisine" : \{$ne : "American "\}\}, \{"address.coord.0" : \{$lt : -65.754168\}\}, \{"grades.score" : \{$gt : 70\}\}]\})\par
+find the restaurants which do not prepare any cuisine of 'American' and achieved a score more than 70 and located in the longitude less than -65.754168. Note : Do this query without using $and operator.\par
+db.addresses.find(\{$and : [\{"cuisine" : \{$ne : "American "\}\}, \{"address.coord.1" : \{$lt : -65.754168\}\}, \{"grades.score" : \{$gt : 70\}\}]\})\par
+find the restaurants which do not prepare any cuisine of 'American ' and achieved a grade point 'A' not belongs to the borough Brooklyn. The document must be displayed according to the cuisine in descending order.\par
+db.addresses.find(\{$and : [\{"cuisine" : \{$ne : "American "\}\}, \{"grades.grade" : "A"\}, \{"borough" : \{$ne : "Brooklyn "\}\}]\}).sort(\{cuisine : -1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Wil' as first three letters for its name.\par
+db.addresses.find(\{"name" : \{ $regex: /^Wil.*/\}\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which contain 'ces' as last three letters for its name.\par
+db.addresses.find(\{"name" : \{ $regex: /.*ces$/\}\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which contain 'Reg' as three letters somewhere in its name.\par
+db.addresses.find(\{"name" : \{ $regex: /Reg/\}\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurants which belong to the borough Bronx and prepared either American or Chinese dish.\par
+db.addresses.find(\{borough: "Bronx", cuisine: \{$in: ["American ","Chinese"]\}\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which belong to the borough Staten Island or Queens or Bronxor Brooklyn.\par
+db.addresses.find(\{$or: [\{"borough": "Staten Island"\}, \{"borough": "Bronxor Brooklyn"\}, \{"borough": "Queens"\}]\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which are not belonging to the borough Staten Island or Queens or Bronxor Brooklyn.\par
+db.addresses.find( \{borough: \{$nin: ["Staten Island","Queens","Bronx","Brooklyn"]\}\} , \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which achieved a score which is not more than 10.\par
+db.addresses.find(\{"grades.score": \{$lte: 10\}\}, \{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, borough and cuisine for those restaurants which prepared dish except 'American' and 'Chinese' or restaurant's name begins with letter 'Wil'.\par
+db.addresses.find(\{$nor: [\{cuisine: \{$in: ["American ","Chinese"]\}\},\{name: /^Wil.*/\}]\},\{_id:0, restaurant_id:1, name:1, borough:1, cuisine:1\})\par
+find the restaurant Id, name, and grades for those restaurants which achieved a grade of "A" and scored 11 on an ISODate "2014-08-11T00:00:00Z" among many of survey dates..\par
+db.addresses.find(\{"grades" : \{$elemMatch: \{"date": ISODate("2014-08-11T00:00:00Z"), "grade":"A", "score":11\}\}\}, \{_id:0, restaurant_id:1, name:1, grades:1\})\par
+find the restaurant Id, name and grades for those restaurants where the 2nd element of grades array contains a grade of "A" and score 9 on an ISODate "2014-08-11T00:00:00Z".\par
+db.addresses.find(\{$and: [\{"grades.1.grade":"A"\}, \{"grades.1.score": 9\}, \{"grades.1.date": ISODate("2014-08-11T00:00:00Z")\}]\},\{_id:0, restaurant_id:1, name:1, grades:1\}).pretty()\par
+find the restaurant Id, name, address and geographical location for those restaurants where 2nd element of coord array contains a value which is more than 42 and upto 52..\par
+db.addresses.find(\{$and : [\{"address.coord.1": \{$gt : 42\}\},\{"address.coord.1": \{$lte : 52\}\}]\}, \{_id:0, restaurant_id:1, name:1, address:1\})\par
+arrange the name of the restaurants in ascending order along with all the columns.\par
+db.addresses.find(\{\},\{_id:0, name:1\}).sort( \{name: 1\})\par
+arrange the name of the restaurants in descending along with all the columns.\par
+db.addresses.find(\{\},\{_id:0, name:1\}).sort( \{name: -1\})\par
+arranged the name of the cuisine in ascending order and for that same cuisine borough should be in descending order.\par
+db.addresses.find(\{\}, \{_id:0, cuisine:1, borough:1\}).sort(\{cuisine: 1, borough: -1\})\par
+know whether all the addresses contains the street or not.\par
+With Street: \par
+db.addresses.find(\{"address.street": \{$regex: /Street/\}\}).pretty()\par
+\par
+Not with street:\par
+db.addresses.find(\{"address.street": \{$ne: \{$regex: /Street/\}\}\}).pretty()\par
+\par
+Write a MongoDB query which will select all documents in the restaurants collection where the coord field value is Double.\par
+db.addresses.find(\{"address.coord": \{$type: "double"\}\}, \{_id:0, address:1\})\par
+Write a MongoDB query which will select the restaurant Id, name and grades for those restaurants which returns 0 as a remainder after dividing the score by 7.\par
+db.addresses.find(\{"grades": \{$elemMatch: \{"score": \{$mod: [7,0]\}\}\}\},\{_id:0, restaurant_id:1, name:1, grades:1\})\par
+find the restaurant name, borough, longitude and attitude and cuisine for those restaurants which contains 'mon' as three letters somewhere in its name.\par
+db.addresses.find(\{name: \{$regex: /mon/\}\},\{_id:0, name:1, borough:1, "address.coord":1, cuisine:1\})\par
+find the restaurant name, borough, longitude and latitude and cuisine for those restaurants which contain 'Mad' as first three letters of its name.\par
+db.addresses.find(\{name: \{$regex: /^Mad.*/\}\},\{_id:0, name:1, borough:1, "address.coord":1, cuisine:1\})\par
+}
+ 
